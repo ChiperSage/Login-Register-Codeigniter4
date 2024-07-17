@@ -10,12 +10,12 @@ class AuthController extends BaseController
     protected $maxLoginAttempts = 5;
     protected $lockoutTime = 900; // 15 minutes
 
-    public function index()
+    public function login()
     {
         return view('login_view');
     }
 
-    public function indexWithCaptcha()
+    public function login_with_captcha()
     {
         return view('login_view_captcha');
     }
