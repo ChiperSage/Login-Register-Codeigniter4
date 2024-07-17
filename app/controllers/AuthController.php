@@ -137,6 +137,36 @@ class AuthController extends BaseController
         }
     }
 
+    public function register()
+    {
+        return view('auth/register_form');
+    }
+
+    public function store()
+    {
+        $session = session();
+        $model = new UserModel();
+
+        $rules = [
+            'username' => 'required|is_unique[users.username]',
+            'password' => 'required|min_length[8]',
+            'confirm_password' => 'required|matches[password]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $data = [
+            'username' => $this->request->getVar('username'),
+            'password' => $this->request->getVar('password'),
+        ];
+
+        $model->save($data);
+        $session->setFlashdata('success', 'Registration successful! You can now login.');
+        return redirect()->to('/login');
+    }
+
     public function logout()
     {
         session()->destroy();
