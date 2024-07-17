@@ -12,12 +12,12 @@ class AuthController extends BaseController
 
     public function login()
     {
-        return view('login_view');
+        return view('auth/login_form');
     }
 
     public function login_with_captcha()
     {
-        return view('login_view_captcha');
+        return view('auth/login_captcha_form');
     }
 
     public function authenticate()
