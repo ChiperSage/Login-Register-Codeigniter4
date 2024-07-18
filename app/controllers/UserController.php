@@ -12,12 +12,12 @@ class UserController extends Controller
         $model = new UserModel();
         $data['users'] = $model->findAll();
         
-        return view('user_list', $data);
+        return view('user/user_list', $data);
     }
 
     public function create()
     {
-        return view('user_add');
+        return view('user/user_add');
     }
 
     public function store()
@@ -42,7 +42,7 @@ class UserController extends Controller
 
         $model->save($data);
 
-        return redirect()->to('/users')->with('success', 'User added successfully');
+        return redirect()->to('/user')->with('success', 'User added successfully');
     }
 
     public function edit($id)
@@ -50,7 +50,7 @@ class UserController extends Controller
         $model = new UserModel();
         $data['user'] = $model->find($id);
 
-        return view('user_edit', $data);
+        return view('user/user_edit', $data);
     }
 
     public function update($id)
@@ -78,7 +78,7 @@ class UserController extends Controller
 
         $model->update($id, $data);
 
-        return redirect()->to('/users')->with('success', 'User updated successfully');
+        return redirect()->to('/user')->with('success', 'User updated successfully');
     }
 
     public function delete($id)
@@ -86,6 +86,6 @@ class UserController extends Controller
         $model = new UserModel();
         $model->delete($id);
 
-        return redirect()->to('/users')->with('success', 'User deleted successfully');
+        return redirect()->to('/user')->with('success', 'User deleted successfully');
     }
 }
