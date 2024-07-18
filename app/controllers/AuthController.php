@@ -23,7 +23,7 @@ class AuthController extends BaseController
     public function authenticate()
     {
         $session = session();
-        $model = new UserModel();
+        $model = new AuthModel();
         
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
@@ -78,7 +78,7 @@ class AuthController extends BaseController
     public function authenticateWithCaptcha()
     {
         $session = session();
-        $model = new UserModel();
+        $model = new AuthModel();
         
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
@@ -145,7 +145,7 @@ class AuthController extends BaseController
     public function store()
     {
         $session = session();
-        $model = new UserModel();
+        $model = new AuthModel();
 
         $rules = [
             'username' => 'required|is_unique[users.username]',
@@ -178,7 +178,7 @@ class AuthController extends BaseController
     {
         $token = bin2hex(random_bytes(16));
         set_cookie('remember_me', $token, 30*24*60*60); // 30 days
-        $model = new UserModel();
+        $model = new AuthModel();
         $model->update($user['id'], ['remember_me_token' => $token]);
     }
 
