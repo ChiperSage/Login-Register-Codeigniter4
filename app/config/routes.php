@@ -5,6 +5,13 @@ namespace Config;
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
 
+// $routes->get('/users', 'UserController::index');
+// $routes->get('/users/create', 'UserController::create');
+// $routes->post('/users/store', 'UserController::store');
+// $routes->get('/users/edit/(:num)', 'UserController::edit/$1');
+// $routes->post('/users/update/(:num)', 'UserController::update/$1');
+// $routes->get('/users/delete/(:num)', 'UserController::delete/$1');
+
 // Load the system's routing file first, so that the app and ENVIRONMENT
 // can override as needed.
 if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
