@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\AuthModel;
 use Config\Services;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
     protected $maxLoginAttempts = 5;
     protected $lockoutTime = 900; // 15 minutes
