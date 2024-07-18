@@ -58,9 +58,9 @@ class UserController extends Controller
         $model = new UserModel();
 
         $rules = [
-            'username' => 'required|alpha_numeric_punct|min_length[3]|max_length[20]|is_unique[users.username,id,{id}]',
+            'username' => "required|alpha_numeric_punct|min_length[3]|max_length[20]|is_unique[users.username,id,{$id}]",
             'password' => 'permit_empty|min_length[8]|regex_match[/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/]',
-            'email' => 'required|valid_email|is_unique[users.email,id,{id}]'
+            'email' => "required|valid_email|is_unique[users.email,id,{$id}]"
         ];
 
         if (!$this->validate($rules)) {
