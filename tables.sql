@@ -10,8 +10,6 @@ CREATE TABLE users (
     login_attempts INT DEFAULT 0,
     last_login_attempt INT DEFAULT 0,
     remember_me_token VARCHAR(255) DEFAULT NULL,
-    role_id INT,
-    group_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id),
@@ -29,7 +27,8 @@ CREATE TABLE roles (
 -- Create the 'groups' table
 CREATE TABLE groups (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    group_name VARCHAR(100) NOT NULL UNIQUE,
+    role_id INT,
+    user_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
