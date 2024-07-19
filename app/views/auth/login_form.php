@@ -4,25 +4,29 @@
     <title>Login</title>
 </head>
 <body>
+    <?php if (session()->getFlashdata('errors')): ?>
+        <div class="alert alert-danger">
+            <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                <p><?= esc($error) ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
     <?php if (session()->getFlashdata('error')): ?>
         <div class="alert alert-danger">
-            <?= session()->getFlashdata('error') ?>
+            <?= esc(session()->getFlashdata('error')) ?>
         </div>
     <?php endif; ?>
 
-    <form action="<?= base_url('/login/authenticate') ?>" method="post">
+    <h1>Login</h1>
+    <form action="<?= base_url('/auth/authenticate') ?>" method="post">
         <?= csrf_field() ?>
         <div>
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" value="<?= old('username') ?>">
+            <label for="identity">Username or Email:</label>
+            <input type="text" name="identity" id="identity" value="<?= old('identity') ?>">
         </div>
         <div>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password">
-        </div>
-        <div>
-            <label for="remember_me">Remember Me:</label>
-            <input type="checkbox" name="remember_me" id="remember_me">
         </div>
         <button type="submit">Login</button>
     </form>
