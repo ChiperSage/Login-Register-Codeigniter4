@@ -27,6 +27,10 @@ class Filters extends BaseConfig
     public $methods = [];
 
     public $filters = [
-        'auth' => ['before' => ['users/*']], // Apply the auth filter to all routes under 'users'
+        'auth' => [
+            'before' => [
+                'user/*', // Apply the auth filter to all user-related routes
+            ],
+        ],
     ];
 }
