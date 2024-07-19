@@ -68,8 +68,9 @@ class AuthController extends Controller
     {
         $session = session();
         $model = new AuthModel();
+        $authConfig = new Auth();
         
-        $username = $this->request->getVar('username');
+        $identity = $this->request->getVar('identity');
         $password = $this->request->getVar('password');
         $rememberMe = $this->request->getVar('remember_me');
         $captchaResponse = $this->request->getVar('g-recaptcha-response');
@@ -81,7 +82,7 @@ class AuthController extends Controller
         }
 
         $rules = [
-            'username' => 'required',
+            'identity' => 'required',
             'password' => 'required'
         ];
 
@@ -89,8 +90,17 @@ class AuthController extends Controller
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $user = $model->where('username', $username)->first();
-        
+        $user = null;
+
+        // Determine login method based on configuration
+        if ($authConfig->loginMethod === 'username') {
+            $user = $model->where('username', $identity)->first();
+        } elseif ($authConfig->loginMethod === 'email') {
+            $user = $model->where('email', $identity)->first();
+        } elseif ($authConfig->loginMethod === 'both') {
+            $user = $model->where('username', $identity)->orWhere('email', $identity)->first();
+        }
+
         if ($user) {
             if ($user['login_attempts'] >= $this->maxLoginAttempts && (time() - $user['last_login_attempt']) < $this->lockoutTime) {
                 $session->setFlashdata('error', 'Your account is locked. Please try again later.');
@@ -99,8 +109,9 @@ class AuthController extends Controller
 
             if (password_verify($password, $user['password'])) {
                 $sessionData = [
-                    'id' => $user['id'],
+                    'user_id' => $user['user_id'],
                     'username' => $user['username'],
+                    'email' => $user['email'],
                     'isLoggedIn' => true,
                 ];
                 $session->set($sessionData);
@@ -109,11 +120,11 @@ class AuthController extends Controller
                     $this->setRememberMe($user);
                 }
 
-                $model->update($user['id'], ['login_attempts' => 0, 'last_login_attempt' => time()]);
+                $model->update($user['user_id'], ['login_attempts' => 0, 'last_login_attempt' => time()]);
                 
                 return redirect()->to('/dashboard');
             } else {
-                $model->update($user['id'], [
+                $model->update($user['user_id'], [
                     'login_attempts' => $user['login_attempts'] + 1,
                     'last_login_attempt' => time()
                 ]);
