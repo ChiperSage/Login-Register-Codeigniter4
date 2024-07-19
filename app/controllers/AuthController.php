@@ -24,13 +24,10 @@ class AuthController extends Controller
     {
         $session = session();
         $model = new AuthModel();
-        
-        $username = $this->request->getVar('username');
-        $password = $this->request->getVar('password');
-        $rememberMe = $this->request->getVar('remember_me');
+        $authConfig = new Auth();
 
         $rules = [
-            'username' => 'required',
+            'identity' => 'required',
             'password' => 'required'
         ];
 
@@ -38,37 +35,29 @@ class AuthController extends Controller
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $user = $model->where('username', $username)->first();
-        
-        if ($user) {
-            if ($user['login_attempts'] >= $this->maxLoginAttempts && (time() - $user['last_login_attempt']) < $this->lockoutTime) {
-                $session->setFlashdata('error', 'Your account is locked. Please try again later.');
-                return redirect()->back();
-            }
+        $identity = $this->request->getPost('identity');
+        $password = $this->request->getPost('password');
+        $user = null;
 
-            if (password_verify($password, $user['password'])) {
-                $sessionData = [
-                    'id' => $user['id'],
-                    'username' => $user['username'],
-                    'isLoggedIn' => true,
-                ];
-                $session->set($sessionData);
+        // Determine login method based on configuration
+        if ($authConfig->loginMethod === 'username') {
+            $user = $model->where('username', $identity)->first();
+        } elseif ($authConfig->loginMethod === 'email') {
+            $user = $model->where('email', $identity)->first();
+        } elseif ($authConfig->loginMethod === 'both') {
+            $user = $model->where('username', $identity)->orWhere('email', $identity)->first();
+        }
 
-                if ($rememberMe) {
-                    $this->setRememberMe($user);
-                }
+        if ($user && password_verify($password, $user['password'])) {
+            $sessionData = [
+                'user_id' => $user['user_id'],
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'isLoggedIn' => true,
+            ];
+            $session->set($sessionData);
 
-                $model->update($user['id'], ['login_attempts' => 0, 'last_login_attempt' => time()]);
-                
-                return redirect()->to('/dashboard');
-            } else {
-                $model->update($user['id'], [
-                    'login_attempts' => $user['login_attempts'] + 1,
-                    'last_login_attempt' => time()
-                ]);
-                $session->setFlashdata('error', 'Invalid login credentials');
-                return redirect()->back();
-            }
+            return redirect()->to('/dashboard');
         } else {
             $session->setFlashdata('error', 'Invalid login credentials');
             return redirect()->back();
