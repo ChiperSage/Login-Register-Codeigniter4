@@ -1,5 +1,6 @@
 <?php
 
+// File: app/Controllers/UserController.php
 namespace App\Controllers;
 
 use App\Models\UserModel;
@@ -7,85 +8,91 @@ use CodeIgniter\Controller;
 
 class UserController extends Controller
 {
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new UserModel();
+        $this->session = \Config\Services::session();
+        $this->validation = \Config\Services::validation();
+    }
+
     public function index()
     {
-        $model = new UserModel();
-        $data['users'] = $model->findAll();
-        
-        return view('user/user_list', $data);
+        $data['users'] = $this->userModel->findAll();
+        return view('user/index', $data);
     }
 
     public function create()
     {
-        return view('user/user_add');
+        return view('user/create');
     }
 
     public function store()
     {
-        $model = new UserModel();
-
         $rules = [
-            'username' => 'required|alpha_numeric_punct|min_length[3]|max_length[20]|is_unique[users.username]',
-            'password' => 'required|min_length[8]|regex_match[/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/]',
-            'email' => 'required|valid_email|is_unique[users.email]'
+            'username' => 'required|alpha_numeric_punct|min_length[5]|max_length[20]|is_unique[users.username]',
+            'email' => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[8]',
+            'confirm_password' => 'required|matches[password]',
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
 
         $data = [
-            'username' => $this->request->getPost('username'),
-            'password' => $this->request->getPost('password'),
-            'email' => $this->request->getPost('email')
+            'username' => $this->request->getVar('username'),
+            'email' => $this->request->getVar('email'),
+            'password' => $this->request->getVar('password'),
         ];
 
-        $model->save($data);
-
-        return redirect()->to('/user')->with('success', 'User added successfully');
+        $this->userModel->save($data);
+        $this->session->setFlashdata('success', 'User created successfully');
+        return redirect()->to('/user');
     }
 
     public function edit($id)
     {
-        $model = new UserModel();
-        $data['user'] = $model->find($id);
-
-        return view('user/user_edit', $data);
+        $data['user'] = $this->userModel->find($id);
+        return view('user/edit', $data);
     }
 
     public function update($id)
     {
-        $model = new UserModel();
-
         $rules = [
-            'username' => "required|alpha_numeric_punct|min_length[3]|max_length[20]|is_unique[users.username,id,{$id}]",
-            'password' => 'permit_empty|min_length[8]|regex_match[/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/]',
-            'email' => "required|valid_email|is_unique[users.email,id,{$id}]"
+            'username' => 'required|alpha_numeric_punct|min_length[5]|max_length[20]',
+            'email' => 'required|valid_email',
         ];
 
+        // Only validate password fields if they are not empty
+        if ($this->request->getVar('password')) {
+            $rules['password'] = 'required|min_length[8]';
+            $rules['confirm_password'] = 'required|matches[password]';
+        }
+
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
 
         $data = [
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email')
+            'username' => $this->request->getVar('username'),
+            'email' => $this->request->getVar('email'),
         ];
 
-        if ($this->request->getPost('password')) {
-            $data['password'] = $this->request->getPost('password');
+        if ($this->request->getVar('password')) {
+            $data['password'] = $this->request->getVar('password');
         }
 
-        $model->update($id, $data);
-
-        return redirect()->to('/user')->with('success', 'User updated successfully');
+        $this->userModel->update($id, $data);
+        $this->session->setFlashdata('success', 'User updated successfully');
+        return redirect()->to('/user');
     }
 
     public function delete($id)
     {
-        $model = new UserModel();
-        $model->delete($id);
-
-        return redirect()->to('/user')->with('success', 'User deleted successfully');
+        $this->userModel->delete($id);
+        $this->session->setFlashdata('success', 'User deleted successfully');
+        return redirect()->to('/user');
     }
 }
