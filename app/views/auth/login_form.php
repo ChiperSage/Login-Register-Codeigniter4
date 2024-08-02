@@ -17,18 +17,20 @@
         </div>
     <?php endif; ?>
 
-    <h1>Login</h1>
-    <form action="<?= base_url('/auth/authenticate') ?>" method="post">
-        <?= csrf_field() ?>
-        <div>
-            <label for="identity">Username or Email:</label>
-            <input type="text" name="identity" id="identity" value="<?= old('identity') ?>">
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password">
-        </div>
-        <button type="submit">Login</button>
-    </form>
+ <h1>Login</h1>
+        <form action="<?= base_url('/login') ?>" method="post">
+            <?= csrf_field() ?>
+            <div class="form-group">
+                <label for="identity">Username:</label>
+                <input type="text" name="identity" id="identity" value="<?= old('identity') ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
+        </form>
 </body>
 </html>

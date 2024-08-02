@@ -17,11 +17,15 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?= base_url('/register/store') ?>" method="post">
+    <form action="<?= base_url('/register') ?>" method="post">
         <?= csrf_field() ?>
         <div>
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" value="<?= old('username') ?>">
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="email" value="">
         </div>
         <div>
             <label for="password">Password:</label>
