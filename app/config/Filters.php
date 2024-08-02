@@ -15,6 +15,7 @@ class Filters extends BaseConfig
 
     public $globals = [
         'before' => [
+            'auth' => ['except' => ['login', 'register']],
             // 'honeypot',
             // 'csrf',
         ],
