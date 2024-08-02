@@ -26,7 +26,7 @@ CREATE TABLE roles (
 
 -- Create the 'groups' table
 CREATE TABLE groups (
-    group_id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT,
     user_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
