@@ -7,10 +7,10 @@ use CodeIgniter\Config\BaseConfig;
 class Filters extends BaseConfig
 {
     public $aliases = [
+        'auth' => \App\Filters\AuthFilter::class, //add this..
         'csrf'     => \CodeIgniter\Filters\CSRF::class,
         'toolbar'  => \CodeIgniter\Filters\DebugToolbar::class,
         'honeypot' => \CodeIgniter\Filters\Honeypot::class,
-        'auth'     => \App\Filters\AuthFilter::class, // Register the auth filter
     ];
 
     public $globals = [
