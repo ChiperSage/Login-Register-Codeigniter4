@@ -1,12 +1,8 @@
-Here's a README file for the `UserController` code:
-
----
-
-# UserController for CodeIgniter 4
+# UserAuth for CodeIgniter 4
 
 ## Overview
 
-The `UserController` is a controller class for managing user-related operations in a CodeIgniter 4 application. It handles user creation, updates, deletion, and role assignment.
+A controller class for managing user-related operations in a CodeIgniter 4 application. It handles user creation, updates, deletion, and role assignment.
 
 ## Features
 
